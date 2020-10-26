@@ -10,10 +10,11 @@ exports.getAllPosts = (req, res) =>{
             data
                 .forEach(doc => {
                     posts.push({
-                        "PostId" : doc.id,
+                        "postId" : doc.id,
                         "body": doc.data().body,
                         "userHandle": doc.data().userHandle,
-                        "createdAt": doc.data().createdAt
+                        "createdAt": doc.data().createdAt,
+                        "userImage": doc.data().userImage
                 });
             })
             return res.json(posts);
@@ -75,7 +76,7 @@ exports.getPost = (req,res) => {
 }
 exports.commentOnPost = (req,res) => {
     if(req.body.body.trim() === ''){
-        return res.status(400).json({error: 'Must not be empty!'})
+        return res.status(400).json({comment: 'Must not be empty!'})
     }
 
     const newComment = {
@@ -195,6 +196,7 @@ exports.deletePost = (req,res) => {
     document.get()
         .then(doc => {
             if (!doc.exists){
+                console.log(req.params.postId);
                 return res.status(404).json({error: 'Post not found !'})
             }
             if (doc.data().userHandle != req.user.handle){
