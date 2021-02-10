@@ -83,7 +83,7 @@ exports.login = (req, res) => {
   const { valid, errors } = validateLoginData(user);
 
   if (!valid) {
-    return res.status(400).json({ errors });
+    return res.status(400).json(errors);
   }
 
   firebase
@@ -136,6 +136,7 @@ exports.getUserDetails = (req, res) => {
     })
     .then((data) => {
       userData.posts = [];
+      console.log(data);
       data.forEach((doc) => {
         userData.posts.push({
           body: doc.data().body,
@@ -167,7 +168,6 @@ exports.markNotificationsRead = (req, res) => {
       return res.json({ message: "Notification marked read!" });
     })
     .catch((err) => {
-      // console.error(err);
       res.status(500).json({ error: err });
     });
 };
@@ -198,9 +198,9 @@ exports.getAuthenticatedUser = (req, res) => {
         .get();
     })
     .then((data) => {
-      userData.notifcations = [];
+      userData.notifications = [];
       data.forEach((doc) => {
-        userData.notifcations.push({
+        userData.notifications.push({
           recipient: doc.data().recipient,
           sender: doc.data().sender,
           createdAt: doc.data().createdAt,

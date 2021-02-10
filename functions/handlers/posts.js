@@ -25,6 +25,10 @@ exports.getAllPosts = (req, res) => {
 };
 
 exports.createPost = (req, res) => {
+  if (req.body.body.trim() === "") {
+    return res.status(400).json({ body: "Must not be empty!" });
+  }
+
   const newPost = {
     body: req.body.body,
     // postId: req.id,
@@ -41,7 +45,7 @@ exports.createPost = (req, res) => {
     .then((doc) => {
       const resPost = newPost;
       resPost.postId = doc.id;
-      res.json({ resPost });
+      res.json(resPost);
     })
     .catch((err) => {
       res.status(500).json({ error: "Something went wrong" });
@@ -70,7 +74,7 @@ exports.getPost = (req, res) => {
       data.forEach((doc) => {
         postData.comments.push(doc.data());
       });
-      return res.json({ postData });
+      return res.json(postData);
     })
     .catch((err) => {
       console.error(err);
@@ -102,7 +106,7 @@ exports.commentOnPost = (req, res) => {
       return db.collection("comments").add(newComment);
     })
     .then(() => {
-      res.json({ newComment });
+      res.json(newComment);
     })
     .catch((err) => {
       console.log(err);
@@ -125,6 +129,7 @@ exports.likePost = (req, res) => {
     .then((doc) => {
       if (doc.exists) {
         postData = doc.data();
+        console.log(postData);
         postData.postId = doc.id;
         return likeDocument.get();
       } else {
